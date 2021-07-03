@@ -1,11 +1,22 @@
-### STAGE 1: Build ###
-FROM node:12.7-alpine AS build
+
+# Stage 1
+FROM node:8.11.2-alpine as node
+
 WORKDIR /usr/src/app
+
 COPY package*.json ./
+
+RUN npm i npm@latest -g
+
 RUN npm install
+
 COPY . .
+
 RUN npm run build
-### STAGE 2: Run ###
-FROM nginx:1.17.1-alpine
+
+# Stage 2
+FROM nginx:1.13.12-alpine
+
 COPY --from=node /usr/src/app/dist /usr/share/nginx/html
+
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
